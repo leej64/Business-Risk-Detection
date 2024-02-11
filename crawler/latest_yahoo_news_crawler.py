@@ -12,7 +12,7 @@ import requests
 
 import yfinance as yf
 from sp500_symbols import sp500_symbols 
-from article_content_crawler import fetch_article_content_and_publish_time
+from article_content_crawler import fetch_article_content_and_publish_time_and_title
 import os
 
 
@@ -22,7 +22,9 @@ def parse_news(news):
         link = news["link"]
         ts = news["providerPublishTime"]
         formatted_timestamp = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        content, publish_time = fetch_article_content_and_publish_time(link)
+        content, publish_time, news_title = fetch_article_content_and_publish_time_and_title(link)
+        if news_title != None:
+            title = news_title
         related_tickers = news.get("relatedTickers", [])
         risk_type = ""
         return [title, link, formatted_timestamp, content, publish_time, related_tickers, risk_type]

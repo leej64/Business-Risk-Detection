@@ -10,8 +10,13 @@ from datetime import datetime
 import requests
 import json
 import urllib
-from article_content_crawler import fetch_article_content_and_publish_time
+from article_content_crawler import fetch_article_content_and_publish_time_and_title
 import yfinance as yf
+from sp500_symbols import sp500_symbols
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 # Scroll to the end of page for given count of times
 # https://stackoverflow.com/questions/48850974/selenium-scroll-to-end-of-page-in-dynamically-loading-webpage
@@ -58,9 +63,12 @@ def fetch_google_search_content(url):
     # Start session
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('headless')
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
     driver = webdriver.Chrome(options=chrome_options)
     driver.implicitly_wait(5)
     driver.get(url)
+    time.sleep(5)
     scroll_down(driver, 5)
     # Return given page's source html
     return driver.page_source
@@ -94,7 +102,7 @@ def get_company_full_name(symbol):
         return ticker.info["longName"]
     except Exception as e:
         print("Failure of getting long name of {}".format(symbol))
-        raise e
+        return None
 
 if __name__ == "__main__":
     # List of companies to look into
@@ -135,10 +143,13 @@ if __name__ == "__main__":
     file_name = "./newsdata/historicalNews - " + current_datetime + ".csv"
     need_header = True
     # Go through each symbol
-    for symbol in symbol_list:
+    for symbol in sp500_symbols:
         df = pd.DataFrame(columns = columns)
         # Fetch urls and titles for given company within timeframe
         company_full_name = get_company_full_name(symbol)
+        # Skip if can't get company long name
+        if company_full_name == None:
+            continue
         url = create_google_search_url(company_full_name, \
                                        "https://finance.yahoo.com/news/", \
                                         1, 1, 2018, 12, 31, 2018)
@@ -151,7 +162,9 @@ if __name__ == "__main__":
                 break
             url = url_list[i]
             title = title_list[i]
-            content, publish_time = fetch_article_content_and_publish_time(url)
+            content, publish_time, news_title = fetch_article_content_and_publish_time_and_title(url)
+            if news_title != None:
+                title = news_title
             df.loc[len(df)] = [title, url, current_datetime, content, publish_time, symbol, ""]
         
         # Write to local csv files

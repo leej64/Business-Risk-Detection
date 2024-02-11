@@ -79,7 +79,7 @@ def fetch_article_content(url):
 '''
 
 
-def parse_article_htmp(soup):
+def parse_article_html(soup):
     # Find article
     article_text = ""
     paragraphs = soup.find_all("p")
@@ -96,7 +96,7 @@ def parse_article_htmp(soup):
     return article_text, publish_time
 
 
-def fetch_article_content_and_publish_time(url): 
+def fetch_article_content_and_publish_time_and_title(url): 
     try:
         print(url)
         
@@ -104,7 +104,7 @@ def fetch_article_content_and_publish_time(url):
         r = requests.get(url)
         #print(r.text)
         soup = BeautifulSoup(r.text, "html.parser")
-        content, publish_time = parse_article_htmp(soup)
+        content, publish_time = parse_article_html(soup)
 
         if publish_time != None:
             return content, publish_time
@@ -118,9 +118,17 @@ def fetch_article_content_and_publish_time(url):
         soup = BeautifulSoup(driver.page_source, "html.parser")
         driver.close()
         driver.quit()
+        
+        # Find title
+        headlines = soup.find_all("div", {"class": "caas-title-wrapper"})
+        title = None
+        for h in headlines:
+            h1 = h.find("h1")
+            if len(title) == 0 and h1 != None:
+                title = h1.text
 
-        content, publish_time = parse_article_htmp(soup)
-        return content, publish_time
+        content, publish_time = parse_article_html(soup)
+        return content, publish_time, title
         
         # Use BS to fetch HTML
         
