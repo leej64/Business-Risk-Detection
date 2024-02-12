@@ -92,8 +92,16 @@ def parse_article_html(soup):
     for t in time_div:
         if t.has_attr("datetime"):
             publish_time = t["datetime"]
+    
+    # Find title
+    title = None
+    headlines = soup.find_all("div", {"class": "caas-title-wrapper"})
+    for h in headlines:
+        h1 = h.find("h1")
+        if title == None and h1 != None:
+            title = h1.text
             
-    return article_text, publish_time
+    return article_text, publish_time, title
 
 
 def fetch_article_content_and_publish_time_and_title(url): 
@@ -104,10 +112,10 @@ def fetch_article_content_and_publish_time_and_title(url):
         r = requests.get(url)
         #print(r.text)
         soup = BeautifulSoup(r.text, "html.parser")
-        content, publish_time = parse_article_html(soup)
+        content, publish_time, title = parse_article_html(soup)
 
         if publish_time != None:
-            return content, publish_time
+            return content, publish_time, title
         
         # Try selenium next
         # Start session
@@ -119,15 +127,8 @@ def fetch_article_content_and_publish_time_and_title(url):
         driver.close()
         driver.quit()
         
-        # Find title
-        headlines = soup.find_all("div", {"class": "caas-title-wrapper"})
-        title = None
-        for h in headlines:
-            h1 = h.find("h1")
-            if len(title) == 0 and h1 != None:
-                title = h1.text
 
-        content, publish_time = parse_article_html(soup)
+        content, publish_time, title = parse_article_html(soup)
         return content, publish_time, title
         
         # Use BS to fetch HTML
