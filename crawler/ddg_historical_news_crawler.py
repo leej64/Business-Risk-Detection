@@ -1,5 +1,4 @@
 import pandas as pd
-from duckduckgo_search import DDGS
 import yfinance as yf
 import requests
 from selenium import webdriver
@@ -15,7 +14,8 @@ from article_content_crawler import fetch_article_content_and_publish_time_and_t
 
 
 
-# Write dataframe to local csv
+# Write dataframe to local csv.
+
 def write_to_local_csv(filename, df, has_header):
     df.to_csv(filename, sep = "`", mode = "a", index = False, header = has_header)
 

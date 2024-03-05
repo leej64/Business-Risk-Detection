@@ -1,5 +1,4 @@
 sp500_symbols = [
-    '''
     "MMM",
     "AOS",
     "ABT",
@@ -324,7 +323,6 @@ sp500_symbols = [
     "MNST",
     "MCO",
     "MS",
-    '''
     "MSI",
     "MSCI",
     "NDAQ",
