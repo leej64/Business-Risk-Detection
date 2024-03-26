@@ -12,13 +12,13 @@ export default function Company() {
     <React.Fragment>
       <Title>Company Info</Title>
       <Typography component="p" variant="h4">
-        Nvidia
+        Amazon Inc.
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on {new Date().getMonth() + 1}/{new Date().getDate()}/{new Date().getFullYear()}
+        on 07/01/2018
       </Typography>
       <div>
-        <Link color="primary" href="https://www.nvidia.com/en-us/">
+        <Link color="primary" href="https://www.amazon.com/">
           Company Website
         </Link>
       </div>

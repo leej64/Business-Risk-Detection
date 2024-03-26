@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, axisClasses } from '@mui/x-charts';
 import $ from 'jquery';
-import json_data from "./NVDA.json"
-
+import stockData from "./data/stock_amzn_2018.json"
 import Title from './Title';
 
 // Generate Sales Data
@@ -11,12 +10,20 @@ function createData(time, price) {
   return { time, price: price ?? null };
 }
 
-var data = [
-  createData("2018-01-01", 43),
-  createData("2018-02-01", 50),
-  createData("2018-03-01", 33),
-  createData("2018-04-01", 17)
-];
+
+var data = [];
+
+// alert(JSON.stringify(stockData));
+
+for (var o in stockData) {
+  // alert(JSON.stringify(stockData[o]["Date"]));
+  if (stockData[o]["Symbol"] != "AMZN") continue;
+  if (stockData[o]["Date"] >= "2018-07-01") {
+    break;
+  }
+  data.push(createData(stockData[o]["Date"].substring(0, 10), stockData[o]["Close"]));
+  
+}
 
 /*
 const data = [

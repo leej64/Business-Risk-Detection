@@ -15,7 +15,7 @@ export default function RiskSummary() {
         Low Risk
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on {new Date().getMonth() + 1}/{new Date().getDate()}/{new Date().getFullYear()}
+        on 07/01/2018
       </Typography>
       <div>
         <Link color="primary" href="#">

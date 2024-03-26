@@ -6,22 +6,29 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
+import newsData from './data/news_amzn_2018.json'
 
 // Generate Order Data
-function createData(id, date, title, author, link, risk_type) {
-  return { id, date, title, author, link, risk_type };
+function createData(id, date, title, ticker, link, risk_type) {
+  return { id, date, title, ticker, link, risk_type };
 }
 
-const rows = [
-  createData(
-    0,
-    '16 Mar, 2018',
-    'AAA',
-    'BBB',
-    'yahoo',
-    'None',
-  )
-];
+const rows = [];
+
+var cnt = 0;
+for (var o in newsData) {
+  if (newsData[o]["related_tickers"] !== "AMZN") continue;
+  if (newsData[o]["publish_time"].substring(0, 10) >= "2018-07-01") continue;
+  cnt += 1;
+  rows.push(createData(
+    cnt,
+    newsData[o]["publish_time"],
+    newsData[o]["title"],
+    newsData[o]["related_tickers"],
+    newsData[o]["link"],
+    newsData[o]["risk_type"]
+  ));
+}
 
 function preventDefault(event) {
   event.preventDefault();
@@ -36,7 +43,7 @@ export default function News() {
           <TableRow>
             <TableCell>Date</TableCell>
             <TableCell>Title</TableCell>
-            <TableCell>Author</TableCell>
+            <TableCell>Related Tickers</TableCell>
             <TableCell>Link</TableCell>
             <TableCell align="right">Risk Type</TableCell>
           </TableRow>
@@ -46,7 +53,7 @@ export default function News() {
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
               <TableCell>{row.title}</TableCell>
-              <TableCell>{row.author}</TableCell>
+              <TableCell>{row.ticker}</TableCell>
               <TableCell>{row.link}</TableCell>
               <TableCell align="right">{row.risk_type}</TableCell>
             </TableRow>
